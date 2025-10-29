@@ -5,3 +5,4 @@ newman run "Corporate_batch_one.postman_collection.json" \
  --delay-request 2000 \
 
 > output.txt
+# Retailcode-Corporate-Newman-Run
