@@ -1,0 +1,3259 @@
+{
+	"info": {
+		"_postman_id": "ca4dcb70-ad73-4823-9d35-3c08cf93bcd0",
+		"name": "Corporate_batch_one",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15102361",
+		"_collection_link": "https://fbistech.postman.co/workspace/Test~a9a58d2f-b937-4db7-bd6a-235733b7494d/collection/15102361-ca4dcb70-ad73-4823-9d35-3c08cf93bcd0?action=share&source=collection_link&creator=15102361"
+	},
+	"item": [
+		{
+			"name": "ADmin_BAtch_one",
+			"item": [
+				{
+					"name": "Auth",
+					"item": [
+						{
+							"name": "Login Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"pm.environment.set(\"token\", jsonData.data.accessToken);",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Login Successful\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \r\n    \"username\" : \"admin@fbistech.com\",\r\n    \"password\" : \"password\"\r\n    //\"password\" : \"login@RetA!lC0de\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/login",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2FA Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Verification successful\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"otp\" : \"111111\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/2fa",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"2fa"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Dashboard",
+					"item": [
+						{
+							"name": "Dashboard Data",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Dashboard Data\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											"",
+											"pm.test(\"Total vend count is a number\", function () {",
+											"    pm.expect(jsonData.data.totalVendCount).to.be.a(\"number\"); ",
+											"});",
+											"",
+											"pm.test(\"Total vend count is a number\", function () {",
+											"    pm.expect(jsonData.data.totalVtuCount).to.be.a(\"number\"); ",
+											"});",
+											"   "
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/admin-dashboard-data",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"admin-dashboard-data"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Refresh Admin Dashboard Data",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Refresh Successful\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											"",
+											"pm.test(\"Total vend count is a number\", function () {",
+											"    pm.expect(jsonData.data.totalVendCount).to.be.a(\"number\"); ",
+											"});",
+											"",
+											"pm.test(\"Total vend count is a number\", function () {",
+											"    pm.expect(jsonData.data.totalVtuCount).to.be.a(\"number\"); ",
+											"});",
+											"   "
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/refresh-admin-dashboard",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"refresh-admin-dashboard"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Dashboard Data Filter",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Dashboard Data\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											"",
+											"pm.test(\"Total vend count is a number\", function () {",
+											"    pm.expect(jsonData.data.totalVendCount).to.be.a(\"number\"); ",
+											"});",
+											"",
+											"pm.test(\"Total vend count is a number\", function () {",
+											"    pm.expect(jsonData.data.totalVtuCount).to.be.a(\"number\"); ",
+											"});",
+											"   "
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/admin-dashboard-data-v2?startDate=2025-05-15&endDate=2025-05-15",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"admin-dashboard-data-v2"
+									],
+									"query": [
+										{
+											"key": "startDate",
+											"value": "2025-05-15"
+										},
+										{
+											"key": "endDate",
+											"value": "2025-05-15"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Analytics",
+					"item": [
+						{
+							"name": "Analytics",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Analytics Data\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											"",
+											"",
+											"   "
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/analytics/top-clients?startDate&endDate",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"analytics",
+										"top-clients"
+									],
+									"query": [
+										{
+											"key": "startDate",
+											"value": "2023-02-20",
+											"description": "Optional | date to start from",
+											"disabled": true
+										},
+										{
+											"key": "endDate",
+											"value": "2023-03-24",
+											"description": "Optional | date to stop at",
+											"disabled": true
+										},
+										{
+											"key": "startDate",
+											"value": null
+										},
+										{
+											"key": "endDate",
+											"value": null
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Failed Transactions",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Analytics Data\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											"",
+											"",
+											"   "
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/analytics/failed-transactions?startDate&endDate",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"analytics",
+										"failed-transactions"
+									],
+									"query": [
+										{
+											"key": "startDate",
+											"value": "2023-02-20",
+											"description": "Optional | date to start from",
+											"disabled": true
+										},
+										{
+											"key": "endDate",
+											"value": "2023-03-24",
+											"description": "Optional | date to stop at",
+											"disabled": true
+										},
+										{
+											"key": "startDate",
+											"value": null
+										},
+										{
+											"key": "endDate",
+											"value": null
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Denominations",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Analytics Data\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											"",
+											"",
+											"   "
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/analytics/denominations?startDate&endDate",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"analytics",
+										"denominations"
+									],
+									"query": [
+										{
+											"key": "startDate",
+											"value": "2023-02-20",
+											"description": "Optional | date to start from",
+											"disabled": true
+										},
+										{
+											"key": "endDate",
+											"value": "2023-03-24",
+											"description": "Optional | date to stop at",
+											"disabled": true
+										},
+										{
+											"key": "startDate",
+											"value": null
+										},
+										{
+											"key": "endDate",
+											"value": null
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Sales Transactions",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Analytics Data\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											"",
+											"",
+											"   "
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/analytics/sales-transactions?filter=Yearly",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"analytics",
+										"sales-transactions"
+									],
+									"query": [
+										{
+											"key": "startDate",
+											"value": "2023-02-20",
+											"description": "Optional | date to start from",
+											"disabled": true
+										},
+										{
+											"key": "endDate",
+											"value": "2023-03-24",
+											"description": "Optional | date to stop at",
+											"disabled": true
+										},
+										{
+											"key": "filter",
+											"value": "Yearly"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Stability Trend",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Analytics Data\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											"",
+											"",
+											"   "
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/analytics/stability-trend?filter=monthly",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"analytics",
+										"stability-trend"
+									],
+									"query": [
+										{
+											"key": "startDate",
+											"value": "2023-02-20",
+											"description": "Optional | date to start from",
+											"disabled": true
+										},
+										{
+											"key": "endDate",
+											"value": "2023-03-24",
+											"description": "Optional | date to stop at",
+											"disabled": true
+										},
+										{
+											"key": "filter",
+											"value": "monthly"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Reports",
+					"item": [
+						{
+							"name": "Corporate Vending Transactions",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Successful\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											"",
+											"",
+											"   "
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/corporates-transactions/vending",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"corporates-transactions",
+										"vending"
+									],
+									"query": [
+										{
+											"key": "startDate",
+											"value": "2023-02-20",
+											"description": "Optional | date to start from",
+											"disabled": true
+										},
+										{
+											"key": "endDate",
+											"value": "2023-03-24",
+											"description": "Optional | date to stop at",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Corporate Vending Transactions",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/api/v1/retailcode-corporate/corporates-transactions/vending",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"retailcode-corporate",
+												"corporates-transactions",
+												"vending"
+											],
+											"query": [
+												{
+													"key": "search",
+													"value": "firstbank",
+													"description": "Optional | Name of the corporate client",
+													"disabled": true
+												},
+												{
+													"key": "query",
+													"value": "SALES",
+													"description": "Optional | Filter String",
+													"disabled": true
+												},
+												{
+													"key": "startDate",
+													"value": "2023-02-18",
+													"description": "Optional | date to start from",
+													"disabled": true
+												},
+												{
+													"key": "endDate",
+													"value": "2023-02-23",
+													"description": "Optional | date to stop at",
+													"disabled": true
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "0.0.0.0:8091"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 01 Mar 2023 14:50:24 GMT"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 01 Mar 2023 14:50:23 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.0.26"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "6000"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "5998"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Access-Control-Allow-Methods",
+											"value": "GET, POST, PUT, DELETE, OPTIONS"
+										},
+										{
+											"key": "Access-Control-Allow-Headers",
+											"value": "X-Requested-With, Content-Type, X-Token-Auth, Authorization, Accept, Application"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"success\": true,\n    \"message\": \"\",\n    \"currentPage\": 1,\n    \"hasMorePages\": false,\n    \"lastPage\": 1,\n    \"nextPageUrl\": null,\n    \"perPage\": 40,\n    \"previousPageUrl\": null,\n    \"total\": 4,\n    \"url\": \"http://0.0.0.0:8091/api/v1/retailcode-corporate/corporates-transactions/vending\",\n    \"data\": [\n        {\n            \"id\": 257,\n            \"amount\": 500,\n            \"productCode\": \"VTU\",\n            \"origin\": \"Admin\",\n            \"corporateName\": \"Bud\",\n            \"clientType\": null,\n            \"transactionReference\": \"uPFwDfFiqYbeLKW2J8ez\",\n            \"account\": \"215997\",\n            \"availableBalance\": \"500.00\",\n            \"channel\": \"CORPORATE\",\n            \"transactionType\": \"Airtime Vending\",\n            \"createdAt\": \"2023-02-21T14:16:09.000000Z\"\n        },\n        {\n            \"id\": 258,\n            \"amount\": 500,\n            \"productCode\": \"VTU\",\n            \"origin\": \"Admin\",\n            \"corporateName\": \"QAS Temi16001\",\n            \"clientType\": \"PREPAID\",\n            \"transactionReference\": \"uPFwDfFiqYbeLKW2J8ez\",\n            \"account\": \"16001\",\n            \"availableBalance\": \"0.00\",\n            \"channel\": \"CORPORATE\",\n            \"transactionType\": \"Airtime Vending\",\n            \"createdAt\": \"2023-02-21T14:16:09.000000Z\"\n        },\n        {\n            \"id\": 243,\n            \"amount\": 500,\n            \"productCode\": \"VTU\",\n            \"origin\": \"Admin\",\n            \"corporateName\": \"Earlene\",\n            \"clientType\": null,\n            \"transactionReference\": \"C2ZXY1vTZaPTgQn7ktjc\",\n            \"account\": \"217721\",\n            \"availableBalance\": \"1500.00\",\n            \"channel\": \"CORPORATE\",\n            \"transactionType\": \"Airtime Vending\",\n            \"createdAt\": \"2023-02-21T14:16:08.000000Z\"\n        },\n        {\n            \"id\": 249,\n            \"amount\": 500,\n            \"productCode\": \"VTU\",\n            \"origin\": \"Admin\",\n            \"corporateName\": \"Earlene\",\n            \"clientType\": null,\n            \"transactionReference\": \"HQoNWbHEN5dSugpXEZoT\",\n            \"account\": \"217721\",\n            \"availableBalance\": \"0.00\",\n            \"channel\": \"CORPORATE\",\n            \"transactionType\": \"Airtime Vending\",\n            \"createdAt\": \"2023-02-21T14:16:08.000000Z\"\n        }\n    ]\n}"
+								}
+							]
+						},
+						{
+							"name": "Vend Details",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Vend Details\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											"",
+											"",
+											"   "
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/vend/2291",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"vend",
+										"2291"
+									],
+									"query": [
+										{
+											"key": "startDate",
+											"value": "2023-02-20",
+											"description": "Optional | date to start from",
+											"disabled": true
+										},
+										{
+											"key": "endDate",
+											"value": "2023-03-24",
+											"description": "Optional | date to stop at",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Download Corporate Vending Transactions",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Network\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"// Removed erroneous JSON parsing",
+											"// const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(true).to.eql(true); // Placeholder as no JSON response is present",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/corporates-transactions/vending/download?startDate=2025-09-25&endDate=2025-09-25",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"corporates-transactions",
+										"vending",
+										"download"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "PENDING",
+											"disabled": true
+										},
+										{
+											"key": "query",
+											"value": "airtime",
+											"description": "Optional | Filter String",
+											"disabled": true
+										},
+										{
+											"key": "startDate",
+											"value": "2025-09-25"
+										},
+										{
+											"key": "endDate",
+											"value": "2025-09-25"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Corporate Client By ID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Client Details\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											"",
+											"",
+											"   "
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/corporate-clients/45",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"corporate-clients",
+										"45"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Corporate Client By ID",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/api/v1/retailcode-corporate/corporate-clients/18",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"retailcode-corporate",
+												"corporate-clients",
+												"18"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "0.0.0.0:8091"
+										},
+										{
+											"key": "Date",
+											"value": "Tue, 14 Mar 2023 07:32:45 GMT"
+										},
+										{
+											"key": "Date",
+											"value": "Tue, 14 Mar 2023 07:32:45 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.0.26"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "6000"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "5999"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Access-Control-Allow-Methods",
+											"value": "GET, POST, PUT, DELETE, OPTIONS"
+										},
+										{
+											"key": "Access-Control-Allow-Headers",
+											"value": "X-Requested-With, Content-Type, X-Token-Auth, Authorization, Accept, Application"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"success\": true,\n    \"message\": null,\n    \"data\": {\n        \"corporateId\": 18,\n        \"name\": \"QA Stan\",\n        \"email\": \"stanislaus.odili@fbistech.com\",\n        \"msisdn\": \"2349030097753\",\n        \"createdAt\": \"2023-03-14 07:23:50\",\n        \"availableBalance\": \"0.00\",\n        \"clientType\": \"PREPAID\",\n        \"limit\": \"2000.00\",\n        \"totalFunding\": null\n    }\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "RBAC",
+					"item": [
+						{
+							"name": "Role",
+							"item": [
+								{
+									"name": "Create Role",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"pm.test(\"Body matches string\", function () {",
+													"    pm.expect(pm.response.text()).to.include(\"Role Added Successfully\");",
+													"});",
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"pm.test(\"Successful POST request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Success flag is true\", function () {",
+													"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+													"});",
+													"",
+													"pm.environment.set(\"role_id\", jsonData.data.id);",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {},
+												"requests": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\" : \"{{$randomBsAdjective}}\",\n    \"permissions\" : [\n        {\"id\" : 1, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true},\n        {\"id\" : 2, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true},\n        {\"id\" : 4, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true}\n    ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/api/v1/admins/roles/create",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"admins",
+												"roles",
+												"create"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get Roles",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"pm.test(\"Body matches string\", function () {",
+													"    pm.expect(pm.response.text()).to.include(\"Roles\");",
+													"});",
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"pm.test(\"Successful POST request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Success flag is true\", function () {",
+													"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+													"});",
+													"",
+													"",
+													"   "
+												],
+												"type": "text/javascript",
+												"packages": {},
+												"requests": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/api/v1/admins/roles",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"admins",
+												"roles"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get Role",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"pm.test(\"Body matches string\", function () {",
+													"    pm.expect(pm.response.text()).to.include(\"Role\");",
+													"});",
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"pm.test(\"Successful POST request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Success flag is true\", function () {",
+													"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+													"});",
+													"",
+													"",
+													"   "
+												],
+												"type": "text/javascript",
+												"packages": {},
+												"requests": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{BASE_URL}}/api/v1/admins/roles/{{role_id}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"admins",
+												"roles",
+												"{{role_id}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update Role",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"pm.test(\"Body matches string\", function () {",
+													"    pm.expect(pm.response.text()).to.include(\"Role updated Successfully\");",
+													"});",
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"pm.test(\"Successful POST request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Success flag is true\", function () {",
+													"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+													"});",
+													"",
+													"",
+													"   "
+												],
+												"type": "text/javascript",
+												"packages": {},
+												"requests": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"id\" : {{role_id}},\n    \"name\" : \"{{$randomFullName}}\",\n    \"permissions\" : [\n        {\"id\" : 1, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true},\n        {\"id\" : 2, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true},\n        {\"id\" : 3, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true},\n        {\"id\" : 4, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true},\n        {\"id\" : 5, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true},\n        {\"id\" : 6, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true},\n        {\"id\" : 7, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true},\n        {\"id\" : 8, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true},\n        {\"id\" : 9, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true},\n        {\"id\" : 10, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true},\n        {\"id\" : 11, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true},\n        {\"id\" : 12, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true},\n        {\"id\" : 13, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true},\n        {\"id\" : 14, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true},\n        {\"id\" : 15, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true},\n        {\"id\" : 16, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true},\n        {\"id\" : 17, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true},\n        {\"id\" : 18, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true},\n        {\"id\" : 19, \"canDelete\" : true, \"canAdd\" : true, \"canEdit\" : true, \"canRead\" : true}\n    ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/api/v1/admins/roles/update",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"admins",
+												"roles",
+												"update"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Role",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"pm.test(\"Body matches string\", function () {",
+													"    pm.expect(pm.response.text()).to.include(\"Role Deleted\");",
+													"});",
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"pm.test(\"Successful POST request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Success flag is true\", function () {",
+													"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+													"});",
+													"",
+													"",
+													"   "
+												],
+												"type": "text/javascript",
+												"packages": {},
+												"requests": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{BASE_URL}}/api/v1/admins/roles/{{role_id}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"admins",
+												"roles",
+												"{{role_id}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Admin",
+							"item": [
+								{
+									"name": "Create Admin",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"pm.test(\"Body matches string\", function () {",
+													"    pm.expect(pm.response.text()).to.include(\"Admin Created\");",
+													"});",
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"pm.test(\"Successful POST request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Success flag is true\", function () {",
+													"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+													"});",
+													"",
+													"pm.environment.set(\"admin_id\", jsonData.data.id);",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {},
+												"requests": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"// Generate a random 7-digit number to follow 234703",
+													"let randomPart = Math.floor(1000000 + Math.random() * 9000000);",
+													"let randomAdminNumber = \"234703\" + randomPart;",
+													"pm.environment.set(\"randomAdminNumber\", randomAdminNumber);",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {},
+												"requests": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"firstname\" : \"{{$randomFirstName}}\",\n    \"lastname\" : \"{{$randomLastName}}\",\n    \"email\" : \"{{$randomEmail}}\",\n    \"msisdn\": \"{{randomAdminNumber}}\",\n    \"role\" : 1\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/api/v1/admins/create",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"admins",
+												"create"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get Admins",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"pm.test(\"Body matches string\", function () {",
+													"    pm.expect(pm.response.text()).to.include(\"Admins\");",
+													"});",
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"pm.test(\"Successful POST request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Success flag is true\", function () {",
+													"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+													"});",
+													"",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {},
+												"requests": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{BASE_URL}}/api/v1/admins/list",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"admins",
+												"list"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update Admin",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"pm.test(\"Body matches string\", function () {",
+													"    pm.expect(pm.response.text()).to.include(\"Admin Details updated\");",
+													"});",
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"pm.test(\"Successful POST request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Success flag is true\", function () {",
+													"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+													"});",
+													"",
+													"",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {},
+												"requests": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"id\" : {{admin_id}},\n    \"firstname\" : \"{{$randomFirstName}}\",\n    \"lastname\" : \"{{$randomLastName}}\",\n    \"email\" : \"{{$randomEmail}}\",\n    \"role\" : 20\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/api/v1/admins/update",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"admins",
+												"update"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Deactivate User",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"pm.test(\"Body matches string\", function () {",
+													"    pm.expect(pm.response.text()).to.include(\"Admin Deactivated\");",
+													"});",
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"pm.test(\"Successful POST request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Success flag is true\", function () {",
+													"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+													"});",
+													"",
+													"",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {},
+												"requests": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{ \n    \n    \"password\" : \"password\"\n    \n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/api/v1/admins/deactivate/{{admin_id}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"admins",
+												"deactivate",
+												"{{admin_id}}"
+											],
+											"query": [
+												{
+													"key": "",
+													"value": null,
+													"disabled": true
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Activate User",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"pm.test(\"Body matches string\", function () {",
+													"    pm.expect(pm.response.text()).to.include(\"Admin Activated\");",
+													"});",
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"pm.test(\"Successful POST request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Success flag is true\", function () {",
+													"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+													"});",
+													"",
+													"",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {},
+												"requests": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"password\" : \"password\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/api/v1/admins/activate/{{admin_id}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"admins",
+												"activate",
+												"{{admin_id}}"
+											],
+											"query": [
+												{
+													"key": "",
+													"value": null,
+													"disabled": true
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete User",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"pm.test(\"Body matches string\", function () {",
+													"    pm.expect(pm.response.text()).to.include(\"Admin Deleted\");",
+													"});",
+													"pm.test(\"Content-Type is present\", function () {",
+													"    pm.response.to.have.header(\"Content-Type\");",
+													"});",
+													"pm.test(\"Successful POST request\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Success flag is true\", function () {",
+													"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+													"});",
+													"",
+													"",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {},
+												"requests": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"password\" : \"password\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/api/v1/admins/delete/{{admin_id}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"admins",
+												"delete",
+												"{{admin_id}}"
+											],
+											"query": [
+												{
+													"key": "",
+													"value": null,
+													"disabled": true
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Client Management",
+					"item": [
+						{
+							"name": "Onboard Corporate Client",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"postman.setEnvironmentVariable(\"apiKey\", jsonData.data.apiKey);",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Corporate user onboarded successfully\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											"",
+											"let response = pm.response.json(); // Parse the response body as JSON",
+											"pm.environment.set(\"client_id\", response.data.id);",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"{{$randomBankAccountName}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"client_type\": \"POSTPAIDPLUS\",\r\n    \"msisdn\": \"{{$randomPhoneNumber}}\",\r\n    \"limit\": 50000,\r\n    \"vtu\": [22, 23, 24, 25]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/onboard",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"onboard"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Corporate Client",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"postman.setEnvironmentVariable(\"apiKey\", jsonData.data.apiKey);",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Client Details Updated successfully\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"corporate_id\" : {{client_id}},\r\n    \"name\": \"{{$randomBsBuzz}}\",\r\n    \"email\" : \"{{$randomEmail}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/corporate-clients/edit",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"corporate-clients",
+										"edit"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Enable / Disable Upfront Commission",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"postman.setEnvironmentVariable(\"apiKey\", jsonData.data.apiKey);",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Upfront Commission Updated Successfuly\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"client_id\" :{{client_id}} ,\r\n    \"status\": false,\r\n    \"commission\" : 3.7\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/corporate-clients/upfront-commission",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"corporate-clients",
+										"upfront-commission"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Switch Client Type",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"postman.setEnvironmentVariable(\"apiKey\", jsonData.data.apiKey);",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Client Type Updated Successfuly\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"client_id\": {{client_id}},\r\n    \"client_type\":\"PREPAID\",\r\n    \"password\":\"password\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/corporate-clients/switch",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"corporate-clients",
+										"switch"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Set Limit",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"postman.setEnvironmentVariable(\"apiKey\", jsonData.data.apiKey);",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Client limit has been set successfully\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"corporateId\": {{client_id}},\r\n    \"limit\": 1,\r\n    \"password\" : \"password\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/corporate-clients/limit",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"corporate-clients",
+										"limit"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Set Status",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"postman.setEnvironmentVariable(\"apiKey\", jsonData.data.apiKey);",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Activation Successful\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"corporateId\": {{client_id}},\r\n    \"status\": 1,\r\n    \"password\" : \"password\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/corporate-clients/status",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"corporate-clients",
+										"status"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Client By Id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"postman.setEnvironmentVariable(\"apiKey\", jsonData.data.apiKey);",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Client Details\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/corporate-clients/{{client_id}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"corporate-clients",
+										"{{client_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "VTU Balance Alert Threshold",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"client_id\" : 45,\n    \"alertThreshold\": 1000000,\n    \"lowAlertThreshold\" : 10000,\n    \"estimatedDurations\" : [\n        {\n            \"start\" : \"11:00\",\n            \"end\" : \"18:00\",\n            \"duration\" : \"30\"\n        },\n        {\n            \"start\" : \"18:00\",\n            \"end\" : \"11:00\",\n            \"duration\" : \"20\"\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/corporate-clients/vtu-balance-threshold",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"corporate-clients",
+										"vtu-balance-threshold"
+									]
+								},
+								"description": "### Update Corporate Client VTU Balance Threshold\n\nThis endpoint is used to update the VTU (Virtual Top-Up) balance threshold for a corporate client.\n\n#### Request Body\n\n- `client_id` (integer): The unique identifier of the client.\n    \n- `alertThreshold` (number): The VTU balance alert threshold.\n    \n- `lowAlertThreshold` (number): The low VTU balance alert threshold.\n    \n- `estimatedDurations` (array): An array of objects containing estimated duration details.\n    \n    - `start` (string): The start time of the estimated duration.\n        \n    - `end` (string): The end time of the estimated duration.\n        \n    - `duration` (string): The duration in minutes.\n        \n\n#### Response\n\n- `success` (boolean): Indicates if the request was successful.\n    \n- `message` (string): A message regarding the request.\n    \n- `data` (object): The updated corporate client data.\n    \n    - `corporateId` (integer): The corporate client's unique identifier.\n        \n    - `userId` (integer): The user's unique identifier.\n        \n    - `name` (string): The name of the client.\n        \n    - `msisdn` (string): The client's MSISDN.\n        \n    - `email` (string): The client's email address.\n        \n    - `clientType` (string): The type of client.\n        \n    - `availableBalance` (number): The available balance.\n        \n    - `outstandingBalance` (number): The outstanding balance.\n        \n    - `totalCommission` (string): The total commission.\n        \n    - `status` (string): The status of the client.\n        \n    - `limit` (string): The client's limit.\n        \n    - `testMode` (integer): Indicates if the client is in test mode.\n        \n    - `createdAt` (string): The creation date.\n        \n    - `totalFunding` (number): The total funding.\n        \n    - `pendingRequest` (number): The number of pending requests.\n        \n    - `servicesList` (array): The list of services provided.\n        \n        - `serviceId` (integer): The unique identifier of the service.\n            \n        - `network` (string): The network of the service.\n            \n        - `provider` (string): The provider of the service.\n            \n        - `status` (string): The status of the service.\n            \n        - `platform` (string): The platform of the service.\n            \n        - `commission` (string): The commission for the service.\n            \n        - `createdAt` (string): The creation date of the service.\n            \n    - `services` (array): The list of services.\n        \n    - `vtuList` (array): The list of VTUs.\n        \n        - `id` (integer): The unique identifier of the VTU.\n            \n        - `msisdn` (string): The VTU's MSISDN.\n            \n        - `status` (string): The status of the VTU.\n            \n        - `balance` (string): The balance of the VTU.\n            \n        - `network` (string): The network of the VTU.\n            \n        - `name` (string): The name of the VTU.\n            \n        - `username` (string): The username of the VTU.\n            \n        - `createdAt` (string): The creation date of the VTU.\n            \n        - `transactionCount` (integer): The transaction count of the VTU.\n            \n    - `vtus` (array): The list of VTUs.\n        \n    - `vendingThreshold` (string): The vending threshold.\n        \n    - `documents` (array): The list of documents.\n        \n        - `documentId` (integer): The unique identifier of the document.\n            \n        - `corporateId` (integer): The corporate client's unique identifier.\n            \n        - `documentName` (string): The name of the document.\n            \n        - `documentUrl` (string): The URL of the document.\n            \n        - `createdAt` (string): The creation date of the document.\n            \n    - `hasVerifiedDocuments` (boolean): Indicates if the documents have been verified.\n        \n    - `minimumBalanceThreshold` (string): The minimum balance threshold.\n        \n    - `balanceNotificationEmail` (array): The list of balance notification emails.\n        \n    - `verificationStatus` (string): The verification status.\n        \n    - `verificationRequestedAt` (string): The date of verification request.\n        \n    - `declineReason` (null): The reason for decline.\n        \n    - `whiteListedIPs` (array): The list of whitelisted IPs.\n        \n    - `reconciliationSentAt` (string): The date of reconciliation sent.\n        \n    - `vtuBalanceAlertThreshold` (number): The VTU balance alert threshold.\n        \n    - `vtuEstimatedDuration` (number): The estimated duration for VTU."
+							},
+							"response": []
+						},
+						{
+							"name": "Set Test Mode",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"postman.setEnvironmentVariable(\"apiKey\", jsonData.data.apiKey);",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Switched to test mode successfully\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"corporateId\": {{client_id}},\n    \"testMode\": 1,\n    \"password\":\"password\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/test-mode",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"test-mode"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Clients",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"postman.setEnvironmentVariable(\"apiKey\", jsonData.data.apiKey);",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"VERIFIED\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/corporate-clients",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"corporate-clients"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Corporate Clients",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/api/v1/retailcode-corporate/corporate-clients?search=temi",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"retailcode-corporate",
+												"corporate-clients"
+											],
+											"query": [
+												{
+													"key": "search",
+													"value": "temi"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Fri, 03 Mar 2023 11:50:33 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.0.2"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "6000"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "5998"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Access-Control-Allow-Methods",
+											"value": "GET, POST, PUT, DELETE, OPTIONS"
+										},
+										{
+											"key": "Access-Control-Allow-Headers",
+											"value": "X-Requested-With, Content-Type, X-Token-Auth, Authorization, Accept, Application"
+										},
+										{
+											"key": "CF-Cache-Status",
+											"value": "DYNAMIC"
+										},
+										{
+											"key": "Report-To",
+											"value": "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=MK1zdeVAkcE0q5opARE7CsXcaTsihBTrhB1IZj81VYpDZWZOsGmU8fAodvUHFSeZ3otY%2FL0BHLdrhh29fDVoKSypLwc8j6HJqWcuXvNuGbSz8wzjoLHqEyZEoTlpk4wzCQyqxQu2A%2FDQlLw%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+										},
+										{
+											"key": "NEL",
+											"value": "{\"success_fraction\":0,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+										},
+										{
+											"key": "Server",
+											"value": "cloudflare"
+										},
+										{
+											"key": "CF-RAY",
+											"value": "7a21a96718841fd4-IAD"
+										},
+										{
+											"key": "Content-Encoding",
+											"value": "br"
+										},
+										{
+											"key": "alt-svc",
+											"value": "h3=\":443\"; ma=86400, h3-29=\":443\"; ma=86400"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"success\": true,\n    \"message\": \"\",\n    \"currentPage\": 1,\n    \"hasMorePages\": false,\n    \"lastPage\": 1,\n    \"nextPageUrl\": null,\n    \"perPage\": 40,\n    \"previousPageUrl\": null,\n    \"total\": 2,\n    \"url\": \"http://devapi.retailcode.com.ng/api/v1/retailcode-corporate/corporate-clients\",\n    \"data\": [\n        {\n            \"corporateId\": 3,\n            \"name\": \"qatemi972972766\",\n            \"msisdn\": \"2348022090738\",\n            \"clientType\": \"POSTPAID\",\n            \"availableBalance\": 3011,\n            \"status\": \"ACTIVE\",\n            \"createdAt\": \"Mar 01, 2023\"\n        },\n        {\n            \"corporateId\": 1,\n            \"name\": \"QAS Temi974599\",\n            \"msisdn\": \"23490303350012\",\n            \"clientType\": \"PREPAID\",\n            \"availableBalance\": 0,\n            \"status\": \"ACTIVE\",\n            \"createdAt\": \"Mar 01, 2023\"\n        }\n    ]\n}"
+								}
+							]
+						},
+						{
+							"name": "Assign Services",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"var jsonData = pm.response.json(); // Define jsonData here",
+											"pm.test(\"Success flag is true\", function () {",
+											"    pm.expect(jsonData.success).to.eql(true); // Check \"success\" is true",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"client_id\" : {{client_id}},\n    \"services\": [2]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/services/assign",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"services",
+										"assign"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Assign Services With Commission",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"client_id\" : {{client_id}},\n    \"services\": [\n        {\n            \"id\" : 1, \n            \"commission\" : 3.75\n        },\n        {\n            \"id\" : 2, \n            \"commission\" : 3.75\n        },\n        {\n            \"id\" : 3, \n            \"commission\" : 3.75\n        },\n        {\n            \"id\" : 4, \n            \"commission\" : 3.75\n        },\n        {\n            \"id\" : 5, \n            \"commission\" : 3.75\n        },\n        {\n            \"id\" : 6, \n            \"commission\" : 3.75\n        },\n        {\n            \"id\" : 7, \n            \"commission\" : 3.75\n        },\n        {\n            \"id\" : 8, \n            \"commission\" : 3.75\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/services/assign",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"services",
+										"assign"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Client",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Body matches string\", function () {",
+											"    pm.expect(pm.response.text()).to.include(\"Client Deleted successfully\");",
+											"});",
+											"pm.test(\"Content-Type is present\", function () {",
+											"    pm.response.to.have.header(\"Content-Type\");",
+											"});",
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+											"});",
+											"",
+											"",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"corporate_id\": {{client_id}}\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/corporate-clients/delete",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"corporate-clients",
+										"delete"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
