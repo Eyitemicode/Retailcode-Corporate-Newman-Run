@@ -27,28 +27,42 @@ jobs:
           npm install -g newman
           npm install -g newman-reporter-htmlextra
 
-      # Step 4: Run Newman Tests
+      # Step 4: Run Newman Tests with JSON Summary
       - name: Run API Regression Tests
         run: |
-          newman run "Corporate_batch_one.postman_collection.json" \
-            -e "Corporate Dev Copy.postman_environment.json" \
-            --reporters cli,htmlextra \
+          newman run "$HOME/Desktop/Retailcode Corporate Newman Run/Corporate_batch_one.postman_collection.json" \
+            -e "$HOME/Desktop/Retailcode Corporate Newman Run/Corporate Dev Copy.postman_environment.json" \
+            --reporters cli,htmlextra,json \
             --reporter-htmlextra-export "report.html" \
-            --delay-request 2000
+            --reporter-json-export "summary.json" \
+            --delay-request 2000 || true   # continue even if tests fail
 
-      # Step 5: Upload HTML Report as Artifact
+      # Step 5: Parse Pass/Fail Counts
+      - name: Extract Test Summary
+        id: parse_summary
+        run: |
+          PASS_COUNT=$(jq '.run.stats.assertions.passed' summary.json)
+          FAIL_COUNT=$(jq '.run.stats.assertions.failed' summary.json)
+          echo "PASS_COUNT=$PASS_COUNT" >> $GITHUB_ENV
+          echo "FAIL_COUNT=$FAIL_COUNT" >> $GITHUB_ENV
+
+      # Step 6: Upload HTML Report as Artifact
       - name: Upload HTML Report
         uses: actions/upload-artifact@v4
         with:
           name: newman-html-report
           path: report.html
 
-      # Step 6: Send Slack Notification
+      # Step 7: Send Slack Notification
       - name: Send Slack Notification
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_USERNAME: "GitHub Actions Bot 🤖"
-          SLACK_TITLE: "✅ Newman Regression Test Completed"
-          SLACK_MESSAGE: "The API regression test has finished successfully. Download the HTML report from the GitHub Actions artifacts 📊"
+          SLACK_TITLE: "Newman Regression Test Completed"
+          SLACK_MESSAGE: |
+            API regression tests finished.
+            ✅ Passed: ${{ env.PASS_COUNT }}
+            ❌ Failed: ${{ env.FAIL_COUNT }}
+            Download the HTML report from the GitHub Actions artifacts 📊
           SLACK_FOOTER: "RetailCode QA Automation"
