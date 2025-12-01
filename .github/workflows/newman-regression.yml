@@ -26,23 +26,24 @@ jobs:
         run: |
           npm install -g newman
           npm install -g newman-reporter-htmlextra
+          sudo apt-get install -y jq  # install jq to parse JSON
 
       # Step 4: Run Newman Tests with JSON Summary
       - name: Run API Regression Tests
         run: |
+          mkdir -p ./reports
           newman run "$HOME/Desktop/Retailcode Corporate Newman Run/Corporate_batch_one.postman_collection.json" \
             -e "$HOME/Desktop/Retailcode Corporate Newman Run/Corporate Dev Copy.postman_environment.json" \
             --reporters cli,htmlextra,json \
-            --reporter-htmlextra-export "report.html" \
-            --reporter-json-export "summary.json" \
-            --delay-request 2000 || true   # continue even if tests fail
+            --reporter-htmlextra-export "./reports/report.html" \
+            --reporter-json-export "./reports/summary.json" \
+            --delay-request 2000 || true
 
       # Step 5: Parse Pass/Fail Counts
       - name: Extract Test Summary
-        id: parse_summary
         run: |
-          PASS_COUNT=$(jq '.run.stats.assertions.passed' summary.json)
-          FAIL_COUNT=$(jq '.run.stats.assertions.failed' summary.json)
+          PASS_COUNT=$(jq '.run.stats.assertions.passed' ./reports/summary.json)
+          FAIL_COUNT=$(jq '.run.stats.assertions.failed' ./reports/summary.json)
           echo "PASS_COUNT=$PASS_COUNT" >> $GITHUB_ENV
           echo "FAIL_COUNT=$FAIL_COUNT" >> $GITHUB_ENV
 
@@ -51,7 +52,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: newman-html-report
-          path: report.html
+          path: ./reports/report.html
 
       # Step 7: Send Slack Notification
       - name: Send Slack Notification
