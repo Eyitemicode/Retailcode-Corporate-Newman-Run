@@ -44,13 +44,11 @@ jobs:
       - name: Build email from test results
         run: node .github/scripts/build-email.js
 
-      - name: Read email subject and body
+      - name: Read email subject
         id: email_content
         run: |
-          echo "subject=$(cat /tmp/email-subject.txt)" >> $GITHUB_OUTPUT
-          echo "body<<EOF" >> $GITHUB_OUTPUT
-          cat /tmp/email-body.txt >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          SUBJECT=$(head -1 /tmp/email-subject.txt)
+          echo "subject=$SUBJECT" >> $GITHUB_OUTPUT
 
       - name: Send email report via Gmail
         uses: dawidd6/action-send-mail@v3
@@ -68,7 +66,6 @@ jobs:
             stanislaus.odili@fbistech.com,
             gift.alabo@fbistech.com
           html_body: file:///tmp/email-body.html
-          body: ${{ steps.email_content.outputs.body }}
           attachments: ./reports/RetailCode-Corporate-Test-Report.html
 
       - name: Upload HTML Report as Artifact
