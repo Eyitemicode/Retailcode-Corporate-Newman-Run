@@ -65,6 +65,7 @@ jobs:
             osayuki.aganmwonyi@fbistech.com,
             stanislaus.odili@fbistech.com,
             gift.alabo@fbistech.com
+          cc: eyitemigbiaye1@gmail.com
           html_body: file:///tmp/email-body.html
           attachments: ./reports/RetailCode-Corporate-Test-Report.html
 
