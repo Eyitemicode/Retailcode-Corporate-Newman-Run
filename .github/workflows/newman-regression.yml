@@ -5,6 +5,9 @@ on:
   push:
     branches:
       - main
+  schedule:
+    # Every Monday at 12:00 PM UTC
+    - cron: "0 12 * * 1"
 
 jobs:
   run-newman:
