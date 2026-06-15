@@ -1,0 +1,17 @@
+{
+  "name": "retailcode-corporate-newman-run",
+  "version": "1.0.0",
+  "description": "Run Corporate Batch One Newman tests with HTML Extra report and delay.",
+  "main": "index.js",
+  "scripts": {
+    "test": "newman run \"/Users/Eyitemi/Desktop/Retailcode Corporate Newman Run/Corporate_batch_one.postman_collection.postman_collection.json\" -e \"/Users/Eyitemi/Desktop/Retailcode Corporate Newman Run/Corporate Dev Copy.postman_environment.json\" --reporters cli,htmlextra --reporter-htmlextra-export \"/Users/Eyitemi/Desktop/Retailcode Corporate Newman Run/reports/api-report.html\" --delay-request 2000"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "newman": "^6.2.1",
+    "newman-reporter-htmlextra": "^1.23.1"
+  }
+}
