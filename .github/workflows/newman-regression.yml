@@ -6,8 +6,7 @@ on:
     branches:
       - main
   schedule:
-    # Every Monday at 12:00 PM UTC
-    - cron: "0 12 * * 1"
+    - cron: "0 12 * * 1"   # Every Monday at 12:00 PM UTC
 
 jobs:
   run-newman:
@@ -25,7 +24,6 @@ jobs:
       - name: Install Newman and reporters
         run: |
           npm install -g newman newman-reporter-htmlextra
-          sudo apt-get install -y jq
 
       - name: Run API Regression Tests
         run: |
@@ -43,264 +41,34 @@ jobs:
             --delay-request 500 \
             --insecure || true
 
-      - name: Build and send email report
-        env:
-          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
-          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
-          GITHUB_RUN_URL: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+      - name: Build email from test results
+        run: node .github/scripts/build-email.js
+
+      - name: Read email subject and body
+        id: email_content
         run: |
-          node - <<'SCRIPT'
-          const fs   = require("fs");
-          const https = require("https");
+          echo "subject=$(cat /tmp/email-subject.txt)" >> $GITHUB_OUTPUT
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          cat /tmp/email-body.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
-          // ── Parse Newman results ────────────────────────────────────────────
-          const raw     = JSON.parse(fs.readFileSync("./reports/summary.json", "utf8"));
-          const stats   = raw.run.stats;
-          const execs   = raw.run.executions;
-          const failures = raw.run.failures || [];
-
-          const totalAssertions  = stats.assertions.total;
-          const failedAssertions = stats.assertions.failed;
-          const passedAssertions = totalAssertions - failedAssertions;
-          const totalRequests    = stats.requests.total;
-          const failedRequests   = stats.requests.failed;
-          const passedRequests   = totalRequests - failedRequests;
-          const durationMs       = raw.run.timings.completed - raw.run.timings.started;
-          const duration         = (durationMs / 1000).toFixed(1) + "s";
-          const runDate          = new Date().toUTCString();
-          const reportUrl        = process.env.GITHUB_RUN_URL;
-          const overallPass      = failedAssertions === 0;
-
-          // ── Build per-request rows ──────────────────────────────────────────
-          // Group failures by request name for quick lookup
-          const failMap = {};
-          for (const f of failures) {
-            const name = f.source && f.source.name ? f.source.name : "Unknown";
-            if (!failMap[name]) failMap[name] = [];
-            if (f.error && f.error.message) failMap[name].push(f.error.message);
-          }
-
-          let requestRows = "";
-          for (const exec of execs) {
-            const reqName   = exec.item.name;
-            const method    = exec.request && exec.request.method ? exec.request.method : "";
-            const url       = exec.request && exec.request.url
-                              ? (exec.request.url.raw || "")
-                              : "";
-            const assertions = exec.assertions || [];
-            const reqFailed  = assertions.some(a => a.error);
-            const passed     = assertions.filter(a => !a.error).length;
-            const failed     = assertions.filter(a =>  a.error).length;
-
-            const rowBg     = reqFailed ? "#fff5f5" : "#f0fdf4";
-            const badge     = reqFailed
-              ? `<span style="background:#ef4444;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;">FAIL</span>`
-              : `<span style="background:#22c55e;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;">PASS</span>`;
-
-            // individual failed assertion messages
-            let failDetails = "";
-            if (reqFailed && failMap[reqName]) {
-              failDetails = failMap[reqName]
-                .map(msg => `<div style="color:#b91c1c;font-size:11px;margin-top:4px;padding-left:8px;border-left:3px solid #ef4444;">✗ ${msg}</div>`)
-                .join("");
-            }
-
-            // individual assertion chips
-            const chips = assertions.map(a => {
-              const ok    = !a.error;
-              const color = ok ? "#16a34a" : "#dc2626";
-              const bg    = ok ? "#dcfce7" : "#fee2e2";
-              return `<span style="background:${bg};color:${color};padding:1px 7px;border-radius:10px;font-size:10px;margin:2px;display:inline-block;">${a.assertion}</span>`;
-            }).join(" ");
-
-            requestRows += `
-            <tr style="background:${rowBg};border-bottom:1px solid #e5e7eb;">
-              <td style="padding:10px 12px;vertical-align:top;">
-                <div style="font-weight:600;font-size:13px;color:#111827;">${reqName}</div>
-                <div style="font-size:11px;color:#6b7280;margin-top:2px;">
-                  <code style="background:#f3f4f6;padding:1px 5px;border-radius:3px;">${method}</code>
-                  <span style="margin-left:4px;word-break:break-all;">${url.replace(/{{BASE_URL}}/g,"[BASE_URL]")}</span>
-                </div>
-                <div style="margin-top:6px;">${chips}</div>
-                ${failDetails}
-              </td>
-              <td style="padding:10px 12px;text-align:center;vertical-align:top;white-space:nowrap;">
-                ${badge}<br>
-                <span style="font-size:11px;color:#6b7280;margin-top:4px;display:block;">${passed}✓ ${failed > 0 ? failed+"✗" : ""}</span>
-              </td>
-            </tr>`;
-          }
-
-          // ── HTML email ──────────────────────────────────────────────────────
-          const statusColor = overallPass ? "#22c55e" : "#ef4444";
-          const statusLabel = overallPass ? "ALL TESTS PASSING" : `${failedAssertions} ASSERTION(S) FAILED`;
-
-          const html = `<!DOCTYPE html>
-          <html lang="en">
-          <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-          <body style="margin:0;padding:0;background:#f4f6f9;font-family:Arial,Helvetica,sans-serif;">
-          <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f6f9;padding:32px 0;">
-            <tr><td align="center">
-              <table width="680" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);">
-
-                <!-- Header -->
-                <tr>
-                  <td style="background:#1e3a5f;padding:24px 32px;">
-                    <h1 style="margin:0;color:#fff;font-size:20px;">RetailCode Corporate — API Test Report</h1>
-                    <p style="margin:6px 0 0;color:#93c5fd;font-size:12px;">${runDate}</p>
-                  </td>
-                </tr>
-
-                <!-- Status banner -->
-                <tr>
-                  <td style="background:${statusColor};padding:10px 32px;">
-                    <p style="margin:0;color:#fff;font-size:14px;font-weight:700;letter-spacing:.5px;">${statusLabel}</p>
-                  </td>
-                </tr>
-
-                <!-- Stats cards -->
-                <tr>
-                  <td style="padding:24px 32px;">
-                    <table width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td align="center" style="padding:14px 8px;background:#f0fdf4;border-radius:6px;width:22%;">
-                          <p style="margin:0;font-size:28px;font-weight:700;color:#16a34a;">${passedAssertions}</p>
-                          <p style="margin:4px 0 0;font-size:11px;color:#6b7280;text-transform:uppercase;">Assertions Passed</p>
-                        </td>
-                        <td width="12"></td>
-                        <td align="center" style="padding:14px 8px;background:#fef2f2;border-radius:6px;width:22%;">
-                          <p style="margin:0;font-size:28px;font-weight:700;color:#dc2626;">${failedAssertions}</p>
-                          <p style="margin:4px 0 0;font-size:11px;color:#6b7280;text-transform:uppercase;">Assertions Failed</p>
-                        </td>
-                        <td width="12"></td>
-                        <td align="center" style="padding:14px 8px;background:#f0f9ff;border-radius:6px;width:22%;">
-                          <p style="margin:0;font-size:28px;font-weight:700;color:#0369a1;">${passedRequests}</p>
-                          <p style="margin:4px 0 0;font-size:11px;color:#6b7280;text-transform:uppercase;">Requests Passed</p>
-                        </td>
-                        <td width="12"></td>
-                        <td align="center" style="padding:14px 8px;background:#fafaf9;border-radius:6px;width:22%;">
-                          <p style="margin:0;font-size:28px;font-weight:700;color:#374151;">${totalAssertions}</p>
-                          <p style="margin:4px 0 0;font-size:11px;color:#6b7280;text-transform:uppercase;">Total Assertions</p>
-                        </td>
-                      </tr>
-                    </table>
-                    <p style="margin:12px 0 0;font-size:12px;color:#6b7280;">
-                      Duration: <strong>${duration}</strong> &nbsp;|&nbsp;
-                      Total requests: <strong>${totalRequests}</strong>
-                    </p>
-                  </td>
-                </tr>
-
-                <!-- Per-request table -->
-                <tr>
-                  <td style="padding:0 32px 8px;">
-                    <h2 style="margin:0 0 12px;font-size:14px;color:#374151;text-transform:uppercase;letter-spacing:.5px;">Test Breakdown</h2>
-                    <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e5e7eb;border-radius:6px;overflow:hidden;">
-                      <thead>
-                        <tr style="background:#f9fafb;">
-                          <th style="padding:9px 12px;text-align:left;font-size:12px;color:#6b7280;font-weight:600;border-bottom:1px solid #e5e7eb;">Request / Assertions</th>
-                          <th style="padding:9px 12px;text-align:center;font-size:12px;color:#6b7280;font-weight:600;border-bottom:1px solid #e5e7eb;width:90px;">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        ${requestRows}
-                      </tbody>
-                    </table>
-                  </td>
-                </tr>
-
-                <!-- CTA -->
-                <tr>
-                  <td style="padding:24px 32px;">
-                    <a href="${reportUrl}"
-                       style="background:#1e3a5f;color:#fff;text-decoration:none;padding:11px 22px;border-radius:6px;font-size:13px;font-weight:600;display:inline-block;">
-                      View Full Run on GitHub Actions →
-                    </a>
-                  </td>
-                </tr>
-
-                <!-- Footer -->
-                <tr>
-                  <td style="background:#f9fafb;padding:14px 32px;border-top:1px solid #e5e7eb;">
-                    <p style="margin:0;font-size:11px;color:#9ca3af;">
-                      Automated by RetailCode QA Pipeline · Newman 6.2.1 · Runs every Monday at 12:00 PM UTC
-                    </p>
-                  </td>
-                </tr>
-
-              </table>
-            </td></tr>
-          </table>
-          </body></html>`;
-
-          // Plain-text fallback
-          const text = [
-            "RetailCode Corporate API Test Report",
-            "=====================================",
-            `Date     : ${runDate}`,
-            `Duration : ${duration}`,
-            `Requests : ${totalRequests} total | ${passedRequests} passed | ${failedRequests} failed`,
-            `Assertions: ${totalAssertions} total | ${passedAssertions} passed | ${failedAssertions} failed`,
-            "",
-            overallPass ? "✅ ALL TESTS PASSING" : `❌ ${failedAssertions} ASSERTION(S) FAILED`,
-            "",
-            "Failed requests:",
-            ...Object.keys(failMap).map(k => `  ✗ ${k}: ${failMap[k].join("; ")}`),
-            "",
-            `Full report: ${reportUrl}`,
-          ].join("\n");
-
-          // ── Recipients ───────────────────────────────────────────────────────
-          const recipients = [
-            { name: "Oladimeji Ajayi [FBISTech - PIL]", email: "oladimeji.ajayi@fbistech.com" },
-            { name: "Osayuki Aganmwonyi",               email: "osayuki.aganmwonyi@fbistech.com" },
-            { name: "Stanislaus Odili [FBISTech - BD]", email: "stanislaus.odili@fbistech.com" },
-            { name: "Gift Alabo [RetailCode - IT]",      email: "gift.alabo@fbistech.com" },
-          ];
-
-          // ── Send via SendGrid ────────────────────────────────────────────────
-          const payload = JSON.stringify({
-            personalizations: [
-              {
-                to: recipients.map(r => ({ name: r.name, email: r.email })),
-              },
-            ],
-            from: {
-              email: process.env.FROM_EMAIL || "qa-bot@retailcode.com.ng",
-              name:  "RetailCode QA Bot",
-            },
-            subject: `[${overallPass ? "✅ PASS" : "❌ FAIL"}] RetailCode Corporate API Test Report — ${new Date().toDateString()}`,
-            content: [
-              { type: "text/plain", value: text },
-              { type: "text/html",  value: html },
-            ],
-          });
-
-          const options = {
-            hostname: "api.sendgrid.com",
-            path:     "/v3/mail/send",
-            method:   "POST",
-            headers:  {
-              "Authorization": `Bearer ${process.env.SENDGRID_API_KEY}`,
-              "Content-Type":  "application/json",
-              "Content-Length": Buffer.byteLength(payload),
-            },
-          };
-
-          const req = https.request(options, res => {
-            console.log(`SendGrid status: ${res.statusCode}`);
-            if (res.statusCode < 200 || res.statusCode >= 300) {
-              let body = "";
-              res.on("data", d => body += d);
-              res.on("end", () => { console.error("SendGrid error:", body); process.exit(1); });
-            } else {
-              console.log("Email sent successfully to", recipients.map(r => r.email).join(", "));
-            }
-          });
-          req.on("error", e => { console.error(e); process.exit(1); });
-          req.write(payload);
-          req.end();
-          SCRIPT
+      - name: Send email report via Gmail
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.GMAIL_USER }}
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          subject: ${{ steps.email_content.outputs.subject }}
+          from: RetailCode QA Bot <${{ secrets.GMAIL_USER }}>
+          to: |
+            oladimeji.ajayi@fbistech.com,
+            osayuki.aganmwonyi@fbistech.com,
+            stanislaus.odili@fbistech.com,
+            gift.alabo@fbistech.com
+          html_body: file:///tmp/email-body.html
+          body: ${{ steps.email_content.outputs.body }}
 
       - name: Upload HTML Report as Artifact
         uses: actions/upload-artifact@v4
