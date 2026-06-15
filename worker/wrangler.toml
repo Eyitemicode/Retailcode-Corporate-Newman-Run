@@ -1,0 +1,27 @@
+name            = "retailcode-corporate-report-notifier"
+main            = "index.js"
+compatibility_date = "2024-01-01"
+
+# ── Cron schedule ─────────────────────────────────────────────────────────────
+# Sends the report automatically after every scheduled CI run.
+# Adjust the cron expression to match your Newman pipeline schedule.
+# Example below fires every weekday at 08:00 UTC.
+[triggers]
+crons = ["0 8 * * 1-5"]
+
+# ── KV Namespace ──────────────────────────────────────────────────────────────
+# Create this namespace once with:
+#   wrangler kv:namespace create REPORT_KV
+# Then paste the returned id below.
+[[kv_namespaces]]
+binding  = "REPORT_KV"
+id       = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+
+# ── Secrets (do NOT put real values here) ────────────────────────────────────
+# Set them with:
+#   wrangler secret put MAILGUN_API_KEY
+#   wrangler secret put MAILGUN_DOMAIN
+#   wrangler secret put FROM_EMAIL
+#
+# [vars]
+# FROM_EMAIL = "RetailCode QA <qa-bot@mg.yourdomain.com>"
