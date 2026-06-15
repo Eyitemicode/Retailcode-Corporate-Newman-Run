@@ -69,6 +69,7 @@ jobs:
             gift.alabo@fbistech.com
           html_body: file:///tmp/email-body.html
           body: ${{ steps.email_content.outputs.body }}
+          attachments: ./reports/RetailCode-Corporate-Test-Report.html
 
       - name: Upload HTML Report as Artifact
         uses: actions/upload-artifact@v4
