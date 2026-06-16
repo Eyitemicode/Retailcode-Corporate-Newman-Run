@@ -1,5 +1,8 @@
 "use strict";
-const fs = require("fs");
+const fs   = require("fs");
+const os   = require("os");
+const path = require("path");
+const tmp  = process.env.RUNNER_TEMP || os.tmpdir();
 
 // ── Parse Newman JSON results ────────────────────────────────────────────────
 const raw      = JSON.parse(fs.readFileSync("./reports/summary.json", "utf8"));
@@ -167,13 +170,13 @@ const html = '<!DOCTYPE html>'
 + '</table></td></tr></table></body></html>';
 
 // ── Write output files ────────────────────────────────────────────────────────
-fs.writeFileSync("/tmp/email-body.html", html);
+fs.writeFileSync(path.join(tmp, "email-body.html"), html);
 
 const subjectTag = overallPass ? "PASS" : "FAIL";
 const subject    = "[" + subjectTag + "] RetailCode Corporate API Report - "
                    + new Date().toDateString()
                    + " | " + passedAssertions + "/" + totalAssertions + " assertions passed";
-fs.writeFileSync("/tmp/email-subject.txt", subject);
+fs.writeFileSync(path.join(tmp, "email-subject.txt"), subject);
 
 const failLines = Object.keys(failMap)
   .map(function(k) { return "  FAIL [" + k + "]: " + failMap[k].join(" | "); })
@@ -184,7 +187,7 @@ const plainText = "Passed: " + passedAssertions
   + " | Requests: " + passedRequests + "/" + totalRequests
   + " | Duration: " + duration
   + (failLines ? "\n\nFailed tests:\n" + failLines : "\n\nAll tests passed.");
-fs.writeFileSync("/tmp/email-body.txt", plainText);
+fs.writeFileSync(path.join(tmp, "email-body.txt"), plainText);
 
 console.log("Email files written.");
 console.log(plainText);
