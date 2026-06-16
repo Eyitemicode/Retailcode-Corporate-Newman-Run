@@ -6,7 +6,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: "0 12 * * 1"   # Every Monday at 12:00 PM UTC (Nigeria = 1:00 PM WAT)
+    - cron: "0 9 * * 1"   # Every Monday at 10:00 AM WAT (Nigeria) = 09:00 AM UTC
 
 jobs:
   run-newman:
